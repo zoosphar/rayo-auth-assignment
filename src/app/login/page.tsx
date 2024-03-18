@@ -122,7 +122,7 @@ export default function Login() {
                 Submit
               </Button>
               <h5 className="w-full mt-2">
-                Don't have an account?{" "}
+                Don&apos;t have an account?
                 <a
                   href="/signup"
                   tabIndex={6}
