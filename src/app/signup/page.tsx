@@ -36,8 +36,9 @@ const loginFormSchema = z
     password: z.string().min(4).max(50),
     confirmPassword: z.string().min(4).max(50),
   })
-  .refine(({ password, confirmPassword }) => password !== confirmPassword, {
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
     message: "Confirm password should match password",
+    path: ["confirmPassword"],
   });
 
 export default function Login() {
@@ -50,16 +51,31 @@ export default function Login() {
       password: "",
       confirmPassword: "",
     },
+    mode: "onBlur",
   });
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log(values);
+  function onValid(values: z.infer<typeof loginFormSchema>) {
+    alert("Your account has been successfully created");
+  }
+
+  function onError() {
+    alert(
+      "Your sign up form has following errors \n" +
+        (form.formState.errors.firstName?.message || "") +
+        (form.formState.errors.lastName?.message || "") +
+        (form.formState.errors.username?.message || "") +
+        (form.formState.errors.password?.message || "") +
+        (form.formState.errors.confirmPassword?.message || "")
+    );
   }
 
   return (
     <div className="w-[30rem]">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onValid, onError)}
+          className="space-y-8"
+        >
           <Card>
             <CardHeader>
               <CardTitle
@@ -184,7 +200,6 @@ export default function Login() {
                         }
                         {...field}
                         tabIndex={7}
-                        autoComplete="off"
                         type="password"
                       />
                     </FormControl>

@@ -30,7 +30,7 @@ const loginFormSchema = z.object({
       message: "Username must be at least 2 characters",
     })
     .max(50),
-  password: z.string().min(4).max(50),
+  password: z.string().min(2).max(50),
 });
 
 export default function Login() {
@@ -42,14 +42,26 @@ export default function Login() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log(values);
+  function onValid(values: z.infer<typeof loginFormSchema>) {
+    alert("You have successfully logged in");
+  }
+
+  function onError() {
+    alert(
+      "Your login form has errors \n" +
+        (form.getFieldState("username").error?.message || "") +
+        " " +
+        (form.getFieldState("password").error?.message || "")
+    );
   }
 
   return (
     <div className="w-[30rem]">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onValid, onError)}
+          className="space-y-8"
+        >
           <Card>
             <CardHeader>
               <CardTitle
@@ -80,6 +92,9 @@ export default function Login() {
                         aria-label={"Form Field"}
                         tabIndex={3}
                         id="username"
+                        aria-errormessage={
+                          form.getFieldState("username").error?.message
+                        }
                         placeholder="Enter your username"
                         {...field}
                       />
@@ -101,6 +116,9 @@ export default function Login() {
                       <Input
                         tabIndex={4}
                         aria-label={"Form Field"}
+                        aria-errormessage={
+                          form.getFieldState("password").error?.message
+                        }
                         id="password"
                         placeholder="Enter your password"
                         {...field}
